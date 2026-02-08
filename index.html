@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catch The Teddy 🧸</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+    background:#f2f2f2; /* Plain background */
+    text-align:center;
+}
+
+h1{
+    margin:10px;
+}
+
+#scoreBoard{
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+.teddy{
+    position:absolute;
+    font-size:40px;
+    cursor:pointer;
+    animation: fall linear;
+}
+
+@keyframes fall{
+    from{ transform:translateY(-50px); }
+    to{ transform:translateY(100vh); }
+}
+
+#gameOver{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    display:none;
+    box-shadow:0 0 20px rgba(0,0,0,0.3);
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:10px;
+    font-weight:bold;
+    background:#ff4e8a;
+    color:white;
+}
+</style>
+</head>
+<body>
+
+<h1>Catch The Teddy 🧸</h1>
+<div id="scoreBoard">Score: 0 | Missed: 0</div>
+
+<div id="gameOver">
+<h2>Game Over 😭</h2>
+<p id="finalScore"></p>
+<button onclick="restartGame()">Play Again</button>
+</div>
+
+<script>
+
+let score=0;
+let missed=0;
+let speed=3000;
+let gameActive=true;
+
+function createTeddy(){
+    if(!gameActive) return;
+
+    let teddy=document.createElement("div");
+    teddy.classList.add("teddy");
+    teddy.innerHTML="🧸";
+
+    teddy.style.left=Math.random()*(window.innerWidth-40)+"px";
+    teddy.style.animationDuration=speed+"ms";
+
+    document.body.appendChild(teddy);
+
+    teddy.onclick=function(){
+        score++;
+        updateScore();
+        teddy.remove();
+    };
+
+    setTimeout(()=>{
+        if(document.body.contains(teddy)){
+            teddy.remove();
+            missed++;
+            updateScore();
+            if(missed>=5){
+                endGame();
+            }
+        }
+    },speed);
+
+    speed=Math.max(1000, speed-50);
+}
+
+function updateScore(){
+    document.getElementById("scoreBoard").innerText=
+        "Score: "+score+" | Missed: "+missed;
+}
+
+function endGame(){
+    gameActive=false;
+    document.getElementById("gameOver").style.display="block";
+    document.getElementById("finalScore").innerText=
+        "Your final score: "+score;
+}
+
+function restartGame(){
+    score=0;
+    missed=0;
+    speed=3000;
+    gameActive=true;
+    document.getElementById("gameOver").style.display="none";
+    updateScore();
+}
+
+setInterval(createTeddy,1000);
+
+</script>
+
+</body>
+</html>
